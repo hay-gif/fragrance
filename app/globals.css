@@ -1,0 +1,343 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FAFAF8;
+  --foreground: #0A0A0A;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar on category pills */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Premium animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-marquee { animation: marquee 30s linear infinite; }
+.animate-fade-up { animation: fadeUp 0.6s ease-out forwards; }
+
+/* Grain texture overlay */
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Glass card */
+.glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.4);
+}
+
+/* Premium shadows */
+.shadow-premium {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+}
+.shadow-premium-md {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+}
+.shadow-premium-hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* Gold gradient text */
+.text-gold {
+  background: linear-gradient(135deg, #C9A96E 0%, #E8C99A 50%, #C9A96E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0ede8 25%, #e8e3dc 50%, #f0ede8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+/* Glass dark */
+.glass-dark {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(10, 10, 10, 0.85);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Additional animations */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-18px) rotate(1deg); }
+  66% { transform: translateY(-8px) rotate(-0.5deg); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-float-slow { animation: float-slow 10s ease-in-out infinite; }
+.animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+
+/* Hover lift utility */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
+
+/* ══════════════════════════════════════════════════════
+   FRAGRANCE OS — Premium Animations
+   ══════════════════════════════════════════════════════ */
+
+/* ── Liquid wave (perfume bottle) ── */
+@keyframes liquid-wave {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes liquid-rise {
+  0%   { transform: translateY(0); opacity: 0.7; }
+  100% { transform: translateY(-6px); opacity: 0.85; }
+}
+.animate-liquid-wave { animation: liquid-wave 3s linear infinite; }
+
+/* ── Scent particles ── */
+@keyframes particle-rise {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.6; }
+  25%  { transform: translateY(-30px) translateX(8px) scale(1.1); opacity: 0.4; }
+  50%  { transform: translateY(-60px) translateX(-5px) scale(0.9); opacity: 0.25; }
+  75%  { transform: translateY(-90px) translateX(10px) scale(0.7); opacity: 0.1; }
+  100% { transform: translateY(-120px) translateX(0) scale(0.5); opacity: 0; }
+}
+.animate-particle { animation: particle-rise linear infinite; }
+
+/* ── Golden glow pulse ── */
+@keyframes glow-gold {
+  0%, 100% { box-shadow: 0 0 20px rgba(201,169,110,0.15), 0 0 40px rgba(201,169,110,0.05); }
+  50%       { box-shadow: 0 0 40px rgba(201,169,110,0.35), 0 0 80px rgba(201,169,110,0.15); }
+}
+.animate-glow-gold { animation: glow-gold 3s ease-in-out infinite; }
+
+/* ── Gold shimmer sweep ── */
+@keyframes shimmer-sweep {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-gold {
+  background: linear-gradient(90deg,
+    #C9A96E 0%, #E8C99A 20%, #F5E6C8 40%, #C9A96E 60%, #B8944A 80%, #C9A96E 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-sweep 4s linear infinite;
+}
+
+/* ── Scroll reveal ── */
+.reveal       { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left  { opacity: 0; transform: translateX(-32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-scale { opacity: 0; transform: scale(0.92); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+/* ── 3D card tilt ── */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  will-change: transform;
+}
+.card-3d:hover { box-shadow: 0 24px 64px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.06); }
+
+/* ── Magnetic button ── */
+.magnetic {
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Bottle glass shine ── */
+@keyframes glass-shine {
+  0%   { opacity: 0; transform: translateX(-100%) skewX(-15deg); }
+  40%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateX(200%) skewX(-15deg); }
+}
+.animate-glass-shine { animation: glass-shine 4s ease-in-out infinite; }
+
+/* ── Number count-up pulse ── */
+@keyframes count-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+
+/* ── Fade-slide stagger for cards ── */
+@keyframes stagger-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stagger-1 { animation: stagger-in 0.5s ease-out 0.1s both; }
+.stagger-2 { animation: stagger-in 0.5s ease-out 0.2s both; }
+.stagger-3 { animation: stagger-in 0.5s ease-out 0.3s both; }
+.stagger-4 { animation: stagger-in 0.5s ease-out 0.4s both; }
+.stagger-5 { animation: stagger-in 0.5s ease-out 0.5s both; }
+.stagger-6 { animation: stagger-in 0.5s ease-out 0.6s both; }
+
+/* ── Gradient border ── */
+.border-gradient {
+  position: relative;
+  border-radius: 24px;
+}
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(201,169,110,0.5) 0%, transparent 50%, rgba(201,169,110,0.3) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Blur-up image loading ── */
+.blur-up { filter: blur(8px); transition: filter 0.4s ease; }
+.blur-up.loaded { filter: blur(0); }
+
+/* ── Timeline progress ── */
+@keyframes progress-fill {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+.animate-progress { animation: progress-fill 0.8s ease-out forwards; }
+
+/* ── Liquid blob loading ── */
+@keyframes blob {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25%  { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50%  { border-radius: 40% 60% 30% 70% / 60% 40% 60% 30%; }
+  75%  { border-radius: 70% 30% 50% 50% / 30% 70% 50% 50%; }
+}
+.animate-blob { animation: blob 6s ease-in-out infinite; }
+
+/* ── Subtle breathing for hero text ── */
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.85; }
+}
+.animate-breathe { animation: breathe 4s ease-in-out infinite; }
+
+/* ── ══════════════════════════════════════════════════════
+   PIF / CPSR PDF-Druck
+   ══════════════════════════════════════════════════════ */
+
+/* ── PIF / CPSR PDF-Druck ─────────────────────────────────────────────────── */
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 15mm 18mm 15mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 10pt;
+    line-height: 1.45;
+  }
+
+  /* Navigationsleiste ausblenden */
+  nav,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Seitenumbrüche */
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h2 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 9pt;
+  }
+
+  th, td {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 4px 6px;
+  }
+
+  th {
+    background: #f5f5f5 !important;
+    color: #555 !important;
+  }
+
+  /* Ampel-Badges → Schwarz/Weiß */
+  [class*="text-green-"],
+  [class*="text-red-"],
+  [class*="text-yellow-"] {
+    color: black !important;
+  }
+
+  [class*="bg-green-"],
+  [class*="bg-red-"],
+  [class*="bg-yellow-"],
+  [class*="bg-white/"] {
+    background: transparent !important;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
