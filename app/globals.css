@@ -266,6 +266,28 @@ body {
 }
 .animate-breathe { animation: breathe 4s ease-in-out infinite; }
 
+/* ── Hero background shimmer pulse ── */
+@keyframes hero-shimmer {
+  0%   { opacity: 0.7; transform: scale(1) translate(0, 0); }
+  33%  { opacity: 1; transform: scale(1.08) translate(1%, -1.5%); }
+  66%  { opacity: 0.75; transform: scale(0.96) translate(-1%, 1%); }
+  100% { opacity: 0.7; transform: scale(1) translate(0, 0); }
+}
+.animate-hero-shimmer { animation: hero-shimmer 12s ease-in-out infinite; }
+
+/* ── Chevron scroll indicator ── */
+@keyframes chevron-fall {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50%       { transform: translateY(6px); opacity: 0.8; }
+}
+.animate-chevron { animation: chevron-fall 1.8s ease-in-out infinite; }
+
+/* ── Order detail expand ── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ── ══════════════════════════════════════════════════════
    PIF / CPSR PDF-Druck
    ══════════════════════════════════════════════════════ */

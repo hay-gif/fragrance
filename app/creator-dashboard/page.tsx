@@ -712,10 +712,10 @@ export default function CreatorDashboardPage() {
                 setActiveTab(tab.key);
                 if (tab.key === "auszahlung" && !connectStatus) loadConnectStatus();
               }}
-              className={`shrink-0 rounded-full px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all ${
+              className={`shrink-0 rounded-full px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 active:scale-95 ${
                 activeTab === tab.key
-                  ? "bg-[#0A0A0A] text-white"
-                  : "border border-[#E5E0D8] text-[#6E6860] hover:border-[#0A0A0A]"
+                  ? "bg-[#0A0A0A] text-white shadow-sm"
+                  : "border border-[#E5E0D8] text-[#6E6860] hover:border-[#0A0A0A] hover:text-[#0A0A0A]"
               }`}
             >
               {tab.label}
@@ -743,7 +743,7 @@ export default function CreatorDashboardPage() {
                 { label: "Bruttoumsatz", value: `${(stats.grossRevenueCents / 100).toFixed(2)} €` },
                 { label: "Provision gesamt", value: `${(stats.commissionCents / 100).toFixed(2)} €` },
               ].map((s) => (
-                <div key={s.label} className="rounded-2xl bg-white border border-[#E5E0D8] p-5">
+                <div key={s.label} className="rounded-2xl bg-white border border-[#E5E0D8] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
                   <p className="text-sm text-[#9E9890]">{s.label}</p>
                   <p className="mt-2 text-2xl font-light tracking-tight text-[#0A0A0A]">{s.value}</p>
                 </div>
@@ -752,20 +752,20 @@ export default function CreatorDashboardPage() {
 
             <div className="grid gap-4 md:grid-cols-3">
               {[
-                { label: "Offene Provision", value: `${(stats.pendingCommissionCents / 100).toFixed(2)} €` },
-                { label: "Auszahlbare Provision", value: `${(stats.payableCommissionCents / 100).toFixed(2)} €` },
-                { label: "Bereits ausgezahlt", value: `${(stats.paidCommissionCents / 100).toFixed(2)} €` },
+                { label: "Offene Provision", value: `${(stats.pendingCommissionCents / 100).toFixed(2)} €`, accent: "border-l-amber-400" },
+                { label: "Auszahlbare Provision", value: `${(stats.payableCommissionCents / 100).toFixed(2)} €`, accent: "border-l-[#B09050]" },
+                { label: "Bereits ausgezahlt", value: `${(stats.paidCommissionCents / 100).toFixed(2)} €`, accent: "border-l-emerald-500" },
               ].map((s) => (
-                <div key={s.label} className="rounded-2xl bg-white border border-[#E5E0D8] p-5">
+                <div key={s.label} className={`rounded-2xl bg-white border border-[#E5E0D8] border-l-4 ${s.accent} p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200`}>
                   <p className="text-sm text-[#9E9890]">{s.label}</p>
-                  <p className="mt-2 text-2xl font-light tracking-tight text-[#0A0A0A]">{s.value}</p>
+                  <p className="mt-2 text-2xl font-bold tracking-tight text-[#B09050]">{s.value}</p>
                 </div>
               ))}
             </div>
 
             <div className="rounded-2xl bg-white border border-[#E5E0D8] p-5">
               <div className="flex items-center gap-1"><p className="text-[10px] uppercase tracking-[0.2em] text-[#9E9890]">Deine Provisionsrate</p><InfoTooltip text={HELP.creator.pendingPayout} compact /></div>
-              <p className="mt-2 text-4xl font-bold text-[#0A0A0A]">{profile.commission_percent ?? 25}%</p>
+              <p className="mt-2 text-4xl font-bold text-[#B09050]">{profile.commission_percent ?? 25}%</p>
               <p className="mt-1 text-xs text-[#9E9890]">
                 Pro Verkauf erhältst du {profile.commission_percent ?? 25}% des Nettopreises automatisch über Stripe Connect ausgezahlt.
                 Bei Fragen zur Anpassung wende dich an das Team.
@@ -1298,7 +1298,7 @@ export default function CreatorDashboardPage() {
             <div className="rounded-2xl bg-white border border-[#E5E0D8] p-5">
               <h2 className="text-lg font-semibold text-[#0A0A0A]">Umsatz-Trend</h2>
               <p className="mt-0.5 text-xs text-[#9E9890]">Letzte 6 Monate</p>
-              <div className="mt-5 flex items-end gap-1.5 h-24">
+              <div className="mt-5 rounded-xl border border-[#F0EDE8] bg-[#FAFAF8] p-4 flex items-end gap-1.5 h-36">
                 {(() => {
                   const maxRev = Math.max(...monthlyRevenue.map((m) => m.revCents), 1);
                   return monthlyRevenue.map((m, i) => {
@@ -1495,15 +1495,15 @@ export default function CreatorDashboardPage() {
               const paid = affiliatePayouts.filter((p) => p.status === "paid").reduce((s, p) => s + p.amountCents, 0);
               return (
                 <div className="grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl bg-white border border-[#E5E0D8] p-5">
+                  <div className="rounded-2xl bg-white border border-[#E5E0D8] border-l-4 border-l-[#B09050] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
                     <p className="text-[10px] uppercase tracking-[0.15em] text-[#9E9890]">Gesamt verdient</p>
-                    <p className="mt-2 text-2xl font-bold text-[#0A0A0A]">{(totalEarned / 100).toFixed(2)} €</p>
+                    <p className="mt-2 text-2xl font-bold text-[#B09050]">{(totalEarned / 100).toFixed(2)} €</p>
                   </div>
-                  <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-5">
+                  <div className="rounded-2xl bg-emerald-50 border border-emerald-200 border-l-4 border-l-emerald-500 p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
                     <p className="text-[10px] uppercase tracking-[0.15em] text-emerald-700">Auszahlbar</p>
                     <p className="mt-2 text-2xl font-bold text-emerald-800">{(payable / 100).toFixed(2)} €</p>
                   </div>
-                  <div className="rounded-2xl bg-white border border-[#E5E0D8] p-5">
+                  <div className="rounded-2xl bg-white border border-[#E5E0D8] border-l-4 border-l-[#9E9890] p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
                     <p className="text-[10px] uppercase tracking-[0.15em] text-[#9E9890]">Ausgezahlt</p>
                     <p className="mt-2 text-2xl font-bold text-[#0A0A0A]">{(paid / 100).toFixed(2)} €</p>
                   </div>

@@ -179,11 +179,11 @@ export default function Home() {
   return (
     <main className="bg-[#FAFAF8] overflow-x-hidden">
       {/* ─── HERO ─────────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center overflow-hidden px-5">
-        {/* Radial glow */}
+      <section className="relative min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center overflow-hidden px-5 pt-20">
+        {/* Animated hero background shimmer */}
         <div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(ellipse 90% 70% at 50% 55%, rgba(201,169,110,0.1) 0%, transparent 65%)" }}
+          className="pointer-events-none absolute inset-0 animate-hero-shimmer"
+          style={{ background: "radial-gradient(ellipse 90% 70% at 50% 55%, rgba(201,169,110,0.18) 0%, transparent 65%)" }}
         />
         {/* Secondary glow */}
         <div
@@ -233,13 +233,13 @@ export default function Home() {
             style={{ animationDelay: "0.6s" }}>
             <Link
               href="/discover"
-              className="magnetic rounded-full bg-white px-8 py-3.5 text-sm font-bold uppercase tracking-widest text-[#0A0A0A] transition-all hover:bg-[#C9A96E] hover:scale-105 active:scale-100 animate-glow-gold"
+              className="magnetic rounded-full bg-white px-8 py-3.5 text-sm font-bold uppercase tracking-widest text-[#0A0A0A] transition-transform duration-150 hover:bg-[#C9A96E] hover:scale-105 active:scale-95 animate-glow-gold"
             >
               Jetzt entdecken
             </Link>
             <Link
               href="/create"
-              className="magnetic rounded-full border border-white/30 px-8 py-3.5 text-sm font-bold uppercase tracking-widest text-white/80 transition-all hover:border-white hover:text-white hover:scale-105 active:scale-100"
+              className="magnetic rounded-full border border-white/30 px-8 py-3.5 text-sm font-bold uppercase tracking-widest text-white/80 transition-transform duration-150 hover:border-white hover:text-white hover:scale-105 active:scale-95"
             >
               Duft erstellen
             </Link>
@@ -260,7 +260,16 @@ export default function Home() {
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 z-10">
           <span className="text-[10px] uppercase tracking-[0.3em]">Entdecken</span>
-          <span className="text-lg animate-bounce">↓</span>
+          <svg
+            className="animate-chevron"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
       </section>
 
@@ -288,7 +297,7 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {HOW_IT_WORKS.map((step, i) => (
               <ScrollReveal key={step.step} animation="up" delay={i * 120}>
-                <div className="group relative border-gradient rounded-3xl bg-[#FAFAF8] p-8 shadow-premium hover:shadow-premium-hover transition-all duration-300">
+                <div className="group relative border-gradient rounded-3xl bg-[#FAFAF8] p-8 shadow-premium hover:shadow-premium-hover hover:-translate-y-1 transition-all duration-300">
                   <span className="mb-6 block text-[11px] font-bold uppercase tracking-[0.3em] text-[#C9A96E]">{step.step}</span>
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0A0A0A] text-2xl text-[#C9A96E] transition-transform duration-300 group-hover:scale-110">
                     {step.icon}
@@ -329,7 +338,7 @@ export default function Home() {
               : fragrances.length > 0
               ? fragrances.map((frag, i) => (
                   <ScrollReveal key={frag.id} animation="up" delay={i * 80}>
-                    <TiltCard className="h-full rounded-3xl overflow-hidden bg-white border border-[#E5E0D8] shadow-premium">
+                    <TiltCard className="h-full rounded-3xl overflow-hidden bg-white border border-[#E5E0D8] shadow-premium hover:shadow-premium-hover hover:-translate-y-1 transition-all duration-300">
                       {/* Image area */}
                       <div className="relative h-60 overflow-hidden bg-[#F5F0EA]">
                         {frag.image_url ? (
@@ -429,7 +438,7 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {VALUE_PROPS.map((vp, i) => (
               <ScrollReveal key={vp.title} animation="up" delay={i * 100}>
-                <TiltCard className={`h-full rounded-3xl bg-gradient-to-br ${vp.gradient} border border-[#E5E0D8] bg-white p-8 shadow-premium`}>
+                <TiltCard className={`h-full rounded-3xl bg-gradient-to-br ${vp.gradient} border border-[#E5E0D8] bg-white p-8 shadow-premium hover:shadow-premium-hover hover:-translate-y-1 transition-all duration-300`}>
                   <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0A0A0A] text-2xl text-[#C9A96E]">
                     {vp.icon}
                   </div>

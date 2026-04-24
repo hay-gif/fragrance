@@ -232,7 +232,7 @@ export default function AboPage() {
             )}
 
             {/* Plan Cards */}
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 pt-4">
               {PLANS.map((plan) => {
                 const isActive =
                   currentSub?.planId.toLowerCase() === plan.id.toLowerCase();
@@ -241,11 +241,15 @@ export default function AboPage() {
                 return (
                   <div
                     key={plan.id}
-                    className="rounded-2xl bg-white border border-[#E5E0D8] p-6 relative"
+                    className={`rounded-2xl bg-white border p-6 relative transition-all duration-200 ${
+                      isActive
+                        ? "border-[#B09050] shadow-md"
+                        : "border-[#E5E0D8] hover:border-[#B09050] hover:shadow-lg"
+                    }`}
                   >
                     {/* Popular Badge */}
                     {plan.popular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#0A0A0A] px-4 py-1 text-[10px] uppercase tracking-wider text-white whitespace-nowrap">
+                      <div className="absolute -top-3.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-[#B09050] px-4 py-1 text-[10px] font-semibold uppercase tracking-wider text-white whitespace-nowrap shadow-sm">
                         Beliebteste Wahl
                       </div>
                     )}
@@ -256,11 +260,10 @@ export default function AboPage() {
                     </h2>
 
                     {/* Price */}
-                    <div className="mt-3 flex items-baseline gap-1">
-                      <span className="text-3xl font-light text-[#0A0A0A]">
-                        €{plan.price.toFixed(2)}
-                      </span>
-                      <span className="text-sm text-[#9E9890]">/Monat</span>
+                    <div className="mt-3 flex items-baseline gap-0.5">
+                      <span className="text-lg font-light text-[#9E9890]">€</span>
+                      <span className="text-3xl font-bold text-[#0A0A0A] tabular-nums">{plan.price.toFixed(2)}</span>
+                      <span className="ml-1 text-sm text-[#9E9890]">/Monat</span>
                     </div>
 
                     {/* Tagline */}
@@ -291,11 +294,11 @@ export default function AboPage() {
                     <button
                       onClick={() => handleSubscribe(plan.id)}
                       disabled={isActive || isSubscribing}
-                      className={`mt-6 w-full rounded-full px-5 py-2.5 text-xs font-medium uppercase tracking-wider transition-all active:scale-95
+                      className={`mt-6 w-full rounded-full px-5 py-2.5 text-xs font-medium uppercase tracking-wider transition-all
                         ${
                           isActive
                             ? "bg-[#F0EDE8] text-[#9E9890] cursor-default"
-                            : "bg-[#0A0A0A] text-white hover:bg-[#2A2A2A] disabled:opacity-60 disabled:cursor-not-allowed"
+                            : "bg-[#0A0A0A] text-white hover:bg-[#2A2A2A] hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                         }`}
                     >
                       {isActive ? (
@@ -323,17 +326,19 @@ export default function AboPage() {
                 {FAQ.map((item, i) => (
                   <details
                     key={i}
-                    className="group rounded-2xl bg-white border border-[#E5E0D8]"
+                    className="group rounded-2xl bg-white border border-[#E5E0D8] transition-all duration-200 hover:border-[#B09050]/40"
                   >
-                    <summary className="flex cursor-pointer items-center justify-between p-5 text-sm font-medium text-[#0A0A0A] list-none">
+                    <summary className="flex cursor-pointer items-center justify-between p-5 text-sm font-medium text-[#0A0A0A] list-none select-none">
                       <span>{item.q}</span>
-                      <span className="ml-4 shrink-0 text-[#C5C0B8] transition-transform group-open:rotate-45">
+                      <span className="ml-4 shrink-0 text-lg leading-none text-[#B09050] transition-transform duration-300 group-open:rotate-45">
                         +
                       </span>
                     </summary>
-                    <p className="px-5 pb-5 text-sm leading-relaxed text-[#6E6860]">
-                      {item.a}
-                    </p>
+                    <div className="overflow-hidden">
+                      <p className="px-5 pb-5 text-sm leading-relaxed text-[#6E6860]">
+                        {item.a}
+                      </p>
+                    </div>
                   </details>
                 ))}
               </div>

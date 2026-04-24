@@ -106,21 +106,21 @@ function getPricePerHundredMl(priceCents: number, sizeMl: number): string {
 // Skeleton card for loading state
 function SkeletonCard() {
   return (
-    <div className="rounded-3xl overflow-hidden bg-white border border-[#E5E0D8] animate-pulse">
-      <div className="h-52 bg-[#F0EDE8]" />
+    <div className="rounded-3xl overflow-hidden bg-white border border-[#E5E0D8]">
+      <div className="h-52 skeleton" />
       <div className="p-4 space-y-3">
         <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-full bg-[#E5E0D8]" />
-          <div className="h-3 w-20 rounded-full bg-[#E5E0D8]" />
+          <div className="h-5 w-5 rounded-full skeleton" />
+          <div className="h-3 w-20 rounded-full skeleton" />
         </div>
-        <div className="h-4 w-3/4 rounded-full bg-[#E5E0D8]" />
+        <div className="h-4 w-3/4 rounded-full skeleton" />
         <div className="flex gap-1.5">
-          <div className="h-5 w-16 rounded-full bg-[#F0EDE8]" />
-          <div className="h-5 w-14 rounded-full bg-[#F0EDE8]" />
+          <div className="h-5 w-16 rounded-full skeleton" />
+          <div className="h-5 w-14 rounded-full skeleton" />
         </div>
         <div className="flex items-center justify-between pt-1">
-          <div className="h-4 w-14 rounded-full bg-[#E5E0D8]" />
-          <div className="h-4 w-20 rounded-full bg-[#E5E0D8]" />
+          <div className="h-4 w-14 rounded-full skeleton" />
+          <div className="h-4 w-16 rounded-full skeleton" />
         </div>
       </div>
     </div>
@@ -481,7 +481,7 @@ export default function DiscoverPage() {
 
       <div className="mx-auto max-w-6xl px-5">
         {/* ── Sticky Filter Bar ──────────────────────────────── */}
-        <div className="sticky top-0 z-20 bg-[#FAFAF8] pt-4 pb-3 border-b border-[#E5E0D8]">
+        <div className="sticky top-16 z-40 bg-[#FAFAF8] pt-4 pb-3 border-b border-[#E5E0D8]">
           {/* Sort + price row */}
           <div className="flex items-center gap-2">
             <div className="relative flex-1 min-w-0">
@@ -657,7 +657,7 @@ export default function DiscoverPage() {
             </button>
           </div>
         ) : (
-          <div className="mt-4 grid grid-cols-1 gap-5 pb-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="mt-4 grid grid-cols-2 gap-4 pb-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((fragrance) => {
               const topComponents = Object.entries(fragrance.composition)
                 .filter(([, percent]) => percent > 0)
@@ -672,7 +672,7 @@ export default function DiscoverPage() {
                 <Link
                   key={fragrance.id}
                   href={`/fragrance/${fragrance.id}`}
-                  className="group block rounded-3xl overflow-hidden bg-white border border-[#E5E0D8] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300"
+                  className="group block rounded-3xl overflow-hidden bg-white border border-[#E5E0D8] shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                 >
                   {/* Image area */}
                   <div className="relative h-52 overflow-hidden">
@@ -698,23 +698,23 @@ export default function DiscoverPage() {
                       </span>
                     )}
 
-                    {/* NEU / Bestseller badge — bottom left */}
+                    {/* NEU / Bestseller badge — top right */}
                     {isNew(fragrance.createdAt) ? (
-                      <span className="absolute bottom-3 left-3 rounded-full bg-[#C9A96E] px-2.5 py-1 text-[9px] font-bold text-[#0A0A0A] uppercase tracking-widest shadow-sm">
+                      <span className="absolute top-3 right-3 rounded-full bg-[#B09050] px-2.5 py-1 text-[9px] font-bold text-white uppercase tracking-widest shadow-sm">
                         NEU
                       </span>
                     ) : fragrance.avgRating >= 4.5 && fragrance.reviewCount >= 5 ? (
-                      <span className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full bg-white/90 backdrop-blur px-2.5 py-1 text-[9px] font-bold text-[#0A0A0A] uppercase tracking-widest shadow-sm">
+                      <span className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-white/90 backdrop-blur px-2.5 py-1 text-[9px] font-bold text-[#0A0A0A] uppercase tracking-widest shadow-sm">
                         <span className="text-[#C9A96E]">★</span> Bestseller
                       </span>
                     ) : null}
 
-                    {/* Wishlist heart — top right */}
+                    {/* Wishlist heart — bottom right */}
                     {currentUserId && (
                       <button
                         onClick={(e) => toggleWishlist(e, fragrance.id)}
                         disabled={isToggling}
-                        className={`absolute top-3 right-3 h-7 w-7 rounded-full flex items-center justify-center backdrop-blur transition-all duration-200 ${
+                        className={`absolute bottom-3 right-3 h-7 w-7 rounded-full flex items-center justify-center backdrop-blur transition-all duration-200 ${
                           isWishlisted
                             ? "bg-white/90 text-[#E05C5C]"
                             : "bg-black/40 text-white/70 hover:bg-white/90 hover:text-[#E05C5C]"
@@ -780,12 +780,17 @@ export default function DiscoverPage() {
                     {fragrance.reviewCount > 0 ? (
                       <div className="mt-2 flex items-center gap-1.5">
                         <div className="flex items-center gap-0.5">
-                          {[1,2,3,4,5].map((s) => (
-                            <span key={s} className={`text-[11px] ${s <= Math.round(fragrance.avgRating) ? "text-[#C9A96E]" : "text-[#E5E0D8]"}`}>★</span>
-                          ))}
+                          {[1,2,3,4,5].map((s) => {
+                            const filled = s <= Math.round(fragrance.avgRating);
+                            return (
+                              <svg key={s} width="11" height="11" viewBox="0 0 12 12" fill={filled ? "#C9A96E" : "none"} xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 1L7.39 4.26L11 4.64L8.5 6.97L9.18 10.5L6 8.77L2.82 10.5L3.5 6.97L1 4.64L4.61 4.26L6 1Z" stroke={filled ? "#C9A96E" : "#D5CFC7"} strokeWidth="0.8" strokeLinejoin="round" />
+                              </svg>
+                            );
+                          })}
                         </div>
                         <span className="text-xs font-semibold text-[#0A0A0A]">{fragrance.avgRating.toFixed(1)}</span>
-                        <span className="text-[10px] text-[#9E9890]">({fragrance.reviewCount} Bewertungen)</span>
+                        <span className="text-[10px] text-[#9E9890]">({fragrance.reviewCount})</span>
                       </div>
                     ) : (
                       <p className="mt-2 text-[10px] text-[#B8B0A8] italic">Noch keine Bewertungen</p>
@@ -798,7 +803,7 @@ export default function DiscoverPage() {
                           {(fragrance.priceCents / 100).toFixed(2).replace(".", ",")} €
                         </span>
                         {fragrance.sizeMl > 0 && (
-                          <p className="text-[10px] text-[#9E9890] leading-tight">
+                          <p className="text-[9px] text-[#B8B0A8] leading-tight mt-0.5 font-normal">
                             {getPricePerHundredMl(fragrance.priceCents, fragrance.sizeMl)} €/100ml · {fragrance.sizeMl}ml
                           </p>
                         )}

@@ -192,12 +192,20 @@ export default function RankingsPage() {
               <Link
                 key={frag.id}
                 href={`/fragrance/${frag.id}`}
-                className="group flex items-center gap-4 rounded-2xl bg-white border border-[#E5E0D8] p-4 hover:border-[#C9A96E]/40 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-200"
+                className="group flex items-center gap-4 rounded-2xl bg-white border border-[#E5E0D8] p-4 hover:bg-[#F5F3F0] hover:border-[#C9A96E]/40 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-200 cursor-pointer"
               >
                 {/* Rank */}
-                <span className={`shrink-0 w-7 text-center text-sm font-bold ${i === 0 ? "text-[#C9A96E]" : i === 1 ? "text-[#9E9890]" : i === 2 ? "text-[#B09050]" : "text-[#C5C0B8]"}`}>
-                  {i + 1}
-                </span>
+                {i === 0 ? (
+                  <span className="shrink-0 w-7 text-center text-lg" title="Gold">🥇</span>
+                ) : i === 1 ? (
+                  <span className="shrink-0 w-7 text-center text-lg" title="Silber">🥈</span>
+                ) : i === 2 ? (
+                  <span className="shrink-0 w-7 text-center text-lg" title="Bronze">🥉</span>
+                ) : (
+                  <span className="shrink-0 w-7 text-center">
+                    <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-[#F5F0EA] text-[11px] font-bold text-[#9E9890]">{i + 1}</span>
+                  </span>
+                )}
 
                 {/* Image */}
                 <div className="shrink-0 h-14 w-14 rounded-2xl overflow-hidden bg-[#F5F0EA]">
@@ -258,12 +266,20 @@ export default function RankingsPage() {
               <Link
                 key={creator.id}
                 href={creator.username ? `/creator/${creator.username}` : "#"}
-                className="group flex items-center gap-4 rounded-2xl bg-white border border-[#E5E0D8] p-4 hover:border-[#C9A96E]/40 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-200"
+                className="group flex items-center gap-4 rounded-2xl bg-white border border-[#E5E0D8] p-4 hover:bg-[#F5F3F0] hover:border-[#C9A96E]/40 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-200 cursor-pointer"
               >
                 {/* Rank */}
-                <span className={`shrink-0 w-7 text-center text-sm font-bold ${i === 0 ? "text-[#C9A96E]" : i === 1 ? "text-[#9E9890]" : i === 2 ? "text-[#B09050]" : "text-[#C5C0B8]"}`}>
-                  {i + 1}
-                </span>
+                {i === 0 ? (
+                  <span className="shrink-0 w-7 text-center text-lg" title="Gold">🥇</span>
+                ) : i === 1 ? (
+                  <span className="shrink-0 w-7 text-center text-lg" title="Silber">🥈</span>
+                ) : i === 2 ? (
+                  <span className="shrink-0 w-7 text-center text-lg" title="Bronze">🥉</span>
+                ) : (
+                  <span className="shrink-0 w-7 text-center">
+                    <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-[#F5F0EA] text-[11px] font-bold text-[#9E9890]">{i + 1}</span>
+                  </span>
+                )}
 
                 {/* Avatar */}
                 <div className="shrink-0 h-12 w-12 rounded-full overflow-hidden bg-[#F5F0EA] border border-[#E5E0D8]">

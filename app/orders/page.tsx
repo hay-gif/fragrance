@@ -319,14 +319,16 @@ export default function OrdersPage() {
       <div className="mx-auto max-w-3xl px-5 py-6">
         {orders.length === 0 ? (
           <ScrollReveal animation="scale">
-            <div className="rounded-2xl bg-white border border-[#E5E0D8] p-10 text-center">
-              <div className="flex justify-center mb-4 opacity-60">
-                <AnimatedFlacon size={70} fillPercent={20} animated />
+            <div className="rounded-2xl bg-white border border-[#E5E0D8] p-12 text-center flex flex-col items-center">
+              <div className="flex justify-center mb-6 opacity-50">
+                <AnimatedFlacon size={80} fillPercent={10} animated />
               </div>
-              <h2 className="text-base font-semibold text-[#0A0A0A]">Noch keine Bestellungen</h2>
-              <p className="mt-2 text-sm text-[#6E6860]">Du hast noch keine Bestellungen aufgegeben.</p>
-              <Link href="/discover" className="mt-5 inline-block rounded-full bg-[#0A0A0A] px-5 py-2.5 text-xs font-medium uppercase tracking-wider text-white active:scale-95 transition-all">
-                Düfte entdecken
+              <h2 className="text-lg font-semibold text-[#0A0A0A]">Noch keine Bestellungen</h2>
+              <p className="mt-2 text-sm text-[#6E6860] max-w-xs">
+                Hier erscheinen deine Bestellungen, sobald du deinen ersten Duft bestellt hast.
+              </p>
+              <Link href="/discover" className="mt-6 inline-block rounded-full bg-[#0A0A0A] px-6 py-3 text-xs font-medium uppercase tracking-wider text-white hover:bg-[#2A2A2A] active:scale-95 transition-all">
+                Düfte entdecken →
               </Link>
             </div>
           </ScrollReveal>
@@ -338,8 +340,8 @@ export default function OrdersPage() {
 
               return (
                 <ScrollReveal key={order.id} animation="up" delay={Math.min(idx * 50, 500)} once>
-                  <div className={`overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${
-                    isActive ? "border-[#C9A96E]/40 shadow-[0_0_0_1px_rgba(201,169,110,0.15)]" : "border-[#E5E0D8]"
+                  <div className={`overflow-hidden rounded-2xl border bg-white transition-all duration-300 cursor-pointer ${
+                    isActive ? "border-[#C9A96E]/40 shadow-[0_0_0_1px_rgba(201,169,110,0.15)] hover:shadow-md" : "border-[#E5E0D8] hover:border-[#C5C0B8] hover:shadow-sm"
                   }`}>
                     {/* Clickable header */}
                     <button
@@ -385,7 +387,7 @@ export default function OrdersPage() {
 
                     {/* Expanded content */}
                     {isExpanded && (
-                      <div className="border-t border-[#E5E0D8] px-5 py-5 space-y-5">
+                      <div className="border-t border-[#E5E0D8] px-5 py-5 space-y-5 animate-[fadeSlideIn_0.2s_ease-out]">
                         {/* Items */}
                         <div>
                           <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-[#9E9890]">Artikel</p>

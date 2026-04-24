@@ -69,8 +69,8 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [userId, setUserId] = useState<string | null>(null);
-  // ?next= wird direkt aus window.location.search gelesen (in finish() und skip),
-  // kein State nötig — vermeidet Race Conditions bei schnellem Klick.
+  const [stepVisible, setStepVisible] = useState(true);
+  const [stepDirection, setStepDirection] = useState<"forward" | "back">("forward");
 
   const [selectedAccords, setSelectedAccords] = useState<string[]>([]);
   const [selectedFamilies, setSelectedFamilies] = useState<string[]>([]);
@@ -89,6 +89,16 @@ export default function OnboardingPage() {
       setUserId(user.id);
     });
   }, [router]);
+
+  function navigateTo(nextStep: number) {
+    const dir = nextStep > step ? "forward" : "back";
+    setStepDirection(dir);
+    setStepVisible(false);
+    setTimeout(() => {
+      setStep(nextStep);
+      setStepVisible(true);
+    }, 200);
+  }
 
   function toggleAccord(key: string) {
     setSelectedAccords((prev) =>
@@ -146,226 +156,234 @@ export default function OnboardingPage() {
       },
     });
 
-    // ?next= direkt aus URL lesen (kein Race-Condition-Risiko durch State-Delay)
     const next = new URLSearchParams(window.location.search).get("next");
     router.push(next && next.startsWith("/") ? next : "/discover");
   }
 
+  const slideOffset = stepVisible
+    ? "0px"
+    : stepDirection === "forward"
+      ? "-12px"
+      : "12px";
+
   return (
     <main className="min-h-screen bg-[#FAFAF8]">
-      {/* Dark header with step indicator */}
       <div className="bg-[#0A0A0A] px-5 pt-20 pb-6">
         <p className="mb-1 text-[10px] uppercase tracking-[0.2em] text-white/40">Fragrance OS</p>
-        <h1 className="text-3xl font-bold text-white">Schritt {step} von {TOTAL_STEPS}</h1>
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-3xl font-bold text-white">Schritt {step}</h1>
+          <span className="text-sm text-white/30">von {TOTAL_STEPS}</span>
+        </div>
 
-        {/* Progress bar: 4 segments */}
         <div className="mt-5 flex gap-1.5">
           {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
             <div
               key={i}
-              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                i < step ? "bg-white" : "bg-white/20"
-              }`}
-            />
+              className="h-1 flex-1 rounded-full overflow-hidden bg-white/20"
+            >
+              <div
+                className="h-full rounded-full bg-white transition-all duration-500 ease-out"
+                style={{ width: i < step ? "100%" : "0%" }}
+              />
+            </div>
           ))}
         </div>
       </div>
 
       <div className="mx-auto max-w-xl px-5 py-6">
-
-        {/* Step 1: Duft-Akkorde */}
-        {step === 1 && (
-          <div>
-            <h2 className="text-xl font-bold text-[#0A0A0A]">Welche Düfte liebst du?</h2>
-            <p className="mt-2 text-sm text-[#6E6860]">
-              Wähle die Duftnoten, die dich ansprechen. Je mehr du auswählst, desto besser werden deine Empfehlungen.
-            </p>
-
-            <div className="mt-6 grid grid-cols-2 gap-2.5">
-              {SCENT_ACCORDS.map((accord) => (
-                <button
-                  key={accord.key}
-                  type="button"
-                  onClick={() => toggleAccord(accord.key)}
-                  className={`rounded-2xl border p-4 text-left transition-all active:scale-95 ${
-                    selectedAccords.includes(accord.key)
-                      ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
-                      : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#C9A96E]"
-                  }`}
-                >
-                  <p className="text-sm font-semibold">{accord.label}</p>
-                  <p className={`mt-0.5 text-[11px] ${selectedAccords.includes(accord.key) ? "text-white/60" : "text-[#9E9890]"}`}>
-                    {accord.desc}
-                  </p>
-                </button>
-              ))}
-            </div>
-
-            {selectedAccords.length > 0 && (
-              <p className="mt-4 text-[10px] uppercase tracking-[0.2em] text-[#9E9890]">
-                {selectedAccords.length} ausgewählt
+        <div
+          style={{
+            opacity: stepVisible ? 1 : 0,
+            transform: `translateX(${slideOffset})`,
+            transition: "opacity 200ms ease, transform 200ms ease",
+          }}
+        >
+          {step === 1 && (
+            <div>
+              <h2 className="text-xl font-bold text-[#0A0A0A]">Welche Düfte liebst du?</h2>
+              <p className="mt-2 text-sm text-[#6E6860]">
+                Wähle die Duftnoten, die dich ansprechen. Je mehr du auswählst, desto besser werden deine Empfehlungen.
               </p>
-            )}
-          </div>
-        )}
 
-        {/* Step 2: Duftstile */}
-        {step === 2 && (
-          <div>
-            <h2 className="text-xl font-bold text-[#0A0A0A]">Welche Duftstile magst du?</h2>
-            <p className="mt-2 text-sm text-[#6E6860]">
-              Mehrfachauswahl möglich.
-            </p>
+              <div className="mt-6 grid grid-cols-2 gap-2.5">
+                {SCENT_ACCORDS.map((accord) => (
+                  <button
+                    key={accord.key}
+                    type="button"
+                    onClick={() => toggleAccord(accord.key)}
+                    className={`rounded-2xl border p-4 text-left transition-all duration-150 active:scale-95 ${
+                      selectedAccords.includes(accord.key)
+                        ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
+                        : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#B09050]/60"
+                    }`}
+                  >
+                    <p className="text-sm font-semibold">{accord.label}</p>
+                    <p className={`mt-0.5 text-[11px] ${selectedAccords.includes(accord.key) ? "text-white/60" : "text-[#9E9890]"}`}>
+                      {accord.desc}
+                    </p>
+                  </button>
+                ))}
+              </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {FAMILIES.map((f) => (
-                <button
-                  key={f.key}
-                  type="button"
-                  onClick={() => toggleFamily(f.key)}
-                  className={`rounded-2xl border p-4 text-left transition-all ${
-                    selectedFamilies.includes(f.key)
-                      ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
-                      : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#0A0A0A]"
-                  }`}
-                >
-                  <span className="text-xl">{f.emoji}</span>
-                  <p className="mt-1 text-sm font-medium">{f.label}</p>
-                </button>
-              ))}
+              {selectedAccords.length > 0 && (
+                <p className="mt-4 text-[10px] uppercase tracking-[0.2em] text-[#9E9890]">
+                  {selectedAccords.length} ausgewählt
+                </p>
+              )}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Step 3: Anlass & Intensität */}
-        {step === 3 && (
-          <div>
-            <h2 className="text-xl font-bold text-[#0A0A0A]">Wofür trägst du Parfüm?</h2>
-            <p className="mt-2 text-sm text-[#6E6860]">Mehrfachauswahl möglich.</p>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              {OCCASIONS.map((o) => (
-                <button
-                  key={o.key}
-                  type="button"
-                  onClick={() => toggleOccasion(o.key)}
-                  className={
-                    selectedOccasions.includes(o.key)
-                      ? "rounded-full border border-[#0A0A0A] bg-[#0A0A0A] px-3 py-1.5 text-[11px] font-medium text-white"
-                      : "rounded-full border border-[#E5E0D8] px-3 py-1.5 text-[11px] font-medium text-[#6E6860] hover:border-[#0A0A0A] transition-all"
-                  }
-                >
-                  {o.emoji} {o.label}
-                </button>
-              ))}
-            </div>
-
-            <p className="mt-8 mb-3 text-[10px] uppercase tracking-[0.2em] text-[#9E9890]">Intensität</p>
-            <div className="space-y-2">
-              {INTENSITIES.map((i) => (
-                <button
-                  key={i.key}
-                  type="button"
-                  onClick={() => setIntensity(i.key)}
-                  className={`w-full rounded-2xl border p-4 text-left transition-all ${
-                    intensity === i.key
-                      ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
-                      : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#0A0A0A]"
-                  }`}
-                >
-                  <p className="text-sm font-medium">{i.label}</p>
-                  <p className={`text-xs mt-0.5 ${intensity === i.key ? "text-white/60" : "text-[#9E9890]"}`}>
-                    {i.desc}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Mood */}
-        {step === 4 && (
-          <div>
-            <h2 className="text-xl font-bold text-[#0A0A0A]">Welche Stimmung soll dein Duft vermitteln?</h2>
-            <p className="mt-2 text-sm text-[#6E6860]">Mehrfachauswahl möglich.</p>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              {MOODS.map((mood) => (
-                <button
-                  key={mood.id}
-                  type="button"
-                  onClick={() => toggleMood(mood.id)}
-                  className={`rounded-2xl border p-4 text-left transition-all active:scale-95 ${
-                    selectedMoods.includes(mood.id)
-                      ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
-                      : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#0A0A0A]"
-                  }`}
-                >
-                  <p className="text-sm font-semibold">{mood.label}</p>
-                  <p className={`mt-0.5 text-[11px] ${selectedMoods.includes(mood.id) ? "text-white/60" : "text-[#9E9890]"}`}>
-                    {mood.desc}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Step 5: Budget */}
-        {step === 5 && (
-          <div>
-            <h2 className="text-xl font-bold text-[#0A0A0A]">Was ist dein Budget?</h2>
-            <p className="mt-2 text-sm text-[#6E6860]">
-              Wir zeigen dir Düfte in deiner Preisklasse zuerst.
-            </p>
-
-            <div className="mt-6 space-y-2">
-              {PRICE_OPTIONS.map((p) => (
-                <button
-                  key={p.label}
-                  type="button"
-                  onClick={() => setPriceMax(p.value)}
-                  className={`w-full rounded-2xl border p-4 text-left text-sm font-medium transition-all ${
-                    priceMax === p.value
-                      ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
-                      : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#0A0A0A]"
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-6 rounded-2xl bg-white border border-[#E5E0D8] p-5">
-              <p className="text-sm font-medium text-[#0A0A0A]">Fast fertig!</p>
-              <p className="mt-1 text-sm text-[#6E6860]">
-                Deine Präferenzen werden gespeichert und helfen uns, den Feed und zukünftige
-                Empfehlungen auf dich anzupassen. Du kannst sie jederzeit in deinem Profil ändern.
+          {step === 2 && (
+            <div>
+              <h2 className="text-xl font-bold text-[#0A0A0A]">Welche Duftstile magst du?</h2>
+              <p className="mt-2 text-sm text-[#6E6860]">
+                Mehrfachauswahl möglich.
               </p>
-            </div>
-          </div>
-        )}
 
-        {/* Navigation */}
+              <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {FAMILIES.map((f) => (
+                  <button
+                    key={f.key}
+                    type="button"
+                    onClick={() => toggleFamily(f.key)}
+                    className={`rounded-2xl border p-4 text-left transition-all duration-150 active:scale-95 ${
+                      selectedFamilies.includes(f.key)
+                        ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
+                        : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#B09050]/60"
+                    }`}
+                  >
+                    <span className="text-xl">{f.emoji}</span>
+                    <p className="mt-1 text-sm font-medium">{f.label}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div>
+              <h2 className="text-xl font-bold text-[#0A0A0A]">Wofür trägst du Parfüm?</h2>
+              <p className="mt-2 text-sm text-[#6E6860]">Mehrfachauswahl möglich.</p>
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                {OCCASIONS.map((o) => (
+                  <button
+                    key={o.key}
+                    type="button"
+                    onClick={() => toggleOccasion(o.key)}
+                    className={`transition-all duration-150 active:scale-95 ${
+                      selectedOccasions.includes(o.key)
+                        ? "rounded-full border border-[#0A0A0A] bg-[#0A0A0A] px-3 py-1.5 text-[11px] font-medium text-white"
+                        : "rounded-full border border-[#E5E0D8] px-3 py-1.5 text-[11px] font-medium text-[#6E6860] hover:border-[#B09050]/60"
+                    }`}
+                  >
+                    {o.emoji} {o.label}
+                  </button>
+                ))}
+              </div>
+
+              <p className="mt-8 mb-3 text-[10px] uppercase tracking-[0.2em] text-[#9E9890]">Intensität</p>
+              <div className="space-y-2">
+                {INTENSITIES.map((i) => (
+                  <button
+                    key={i.key}
+                    type="button"
+                    onClick={() => setIntensity(i.key)}
+                    className={`w-full rounded-2xl border p-4 text-left transition-all duration-150 active:scale-95 ${
+                      intensity === i.key
+                        ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
+                        : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#B09050]/60"
+                    }`}
+                  >
+                    <p className="text-sm font-medium">{i.label}</p>
+                    <p className={`text-xs mt-0.5 ${intensity === i.key ? "text-white/60" : "text-[#9E9890]"}`}>
+                      {i.desc}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div>
+              <h2 className="text-xl font-bold text-[#0A0A0A]">Welche Stimmung soll dein Duft vermitteln?</h2>
+              <p className="mt-2 text-sm text-[#6E6860]">Mehrfachauswahl möglich.</p>
+
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                {MOODS.map((mood) => (
+                  <button
+                    key={mood.id}
+                    type="button"
+                    onClick={() => toggleMood(mood.id)}
+                    className={`rounded-2xl border p-4 text-left transition-all duration-150 active:scale-95 ${
+                      selectedMoods.includes(mood.id)
+                        ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
+                        : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#B09050]/60"
+                    }`}
+                  >
+                    <p className="text-sm font-semibold">{mood.label}</p>
+                    <p className={`mt-0.5 text-[11px] ${selectedMoods.includes(mood.id) ? "text-white/60" : "text-[#9E9890]"}`}>
+                      {mood.desc}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 5 && (
+            <div>
+              <h2 className="text-xl font-bold text-[#0A0A0A]">Was ist dein Budget?</h2>
+              <p className="mt-2 text-sm text-[#6E6860]">
+                Wir zeigen dir Düfte in deiner Preisklasse zuerst.
+              </p>
+
+              <div className="mt-6 space-y-2">
+                {PRICE_OPTIONS.map((p) => (
+                  <button
+                    key={p.label}
+                    type="button"
+                    onClick={() => setPriceMax(p.value)}
+                    className={`w-full rounded-2xl border p-4 text-left text-sm font-medium transition-all duration-150 active:scale-95 ${
+                      priceMax === p.value
+                        ? "border-[#0A0A0A] bg-[#0A0A0A] text-white"
+                        : "border-[#E5E0D8] bg-white text-[#0A0A0A] hover:border-[#B09050]/60"
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6 rounded-2xl bg-white border border-[#E5E0D8] p-5">
+                <p className="text-sm font-medium text-[#0A0A0A]">Fast fertig!</p>
+                <p className="mt-1 text-sm text-[#6E6860]">
+                  Deine Präferenzen werden gespeichert und helfen uns, den Feed und zukünftige
+                  Empfehlungen auf dich anzupassen. Du kannst sie jederzeit in deinem Profil ändern.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="mt-8 flex items-center justify-between">
           {step > 1 ? (
             <button
               type="button"
-              onClick={() => setStep((s) => s - 1)}
-              className="rounded-full border border-[#E5E0D8] px-4 py-2 text-xs font-medium text-[#6E6860] hover:border-[#0A0A0A] transition-colors"
+              onClick={() => navigateTo(step - 1)}
+              className="rounded-full border border-[#E5E0D8] px-4 py-2 text-xs font-medium text-[#6E6860] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-all active:scale-95"
             >
-              Zurück
+              ← Zurück
             </button>
           ) : (
             <button
               type="button"
               onClick={() => {
-                // Überspringen = NICHT abgeschlossen → beim nächsten Login wieder anzeigen
-                // URL direkt lesen statt nextUrl-State (kein Race-Condition-Risiko)
                 const next = new URLSearchParams(window.location.search).get("next");
                 router.push(next && next.startsWith("/") ? next : "/discover");
               }}
-              className="text-xs text-[#9E9890] underline underline-offset-2"
+              className="text-xs text-[#9E9890] underline underline-offset-2 hover:text-[#6E6860] transition-colors"
             >
               Überspringen
             </button>
@@ -374,8 +392,8 @@ export default function OnboardingPage() {
           {step < TOTAL_STEPS ? (
             <button
               type="button"
-              onClick={() => setStep((s) => s + 1)}
-              className="rounded-full bg-[#0A0A0A] px-5 py-2.5 text-xs font-medium uppercase tracking-wider text-white active:scale-95 transition-all"
+              onClick={() => navigateTo(step + 1)}
+              className="rounded-full bg-[#0A0A0A] px-5 py-2.5 text-xs font-medium uppercase tracking-wider text-white active:scale-95 transition-all hover:bg-[#1A1A1A]"
             >
               Weiter →
             </button>
@@ -384,9 +402,15 @@ export default function OnboardingPage() {
               type="button"
               onClick={finish}
               disabled={saving}
-              className="rounded-full bg-[#0A0A0A] px-5 py-2.5 text-xs font-medium uppercase tracking-wider text-white active:scale-95 transition-all disabled:opacity-40"
+              className="flex items-center gap-2 rounded-full bg-[#0A0A0A] px-5 py-2.5 text-xs font-medium uppercase tracking-wider text-white active:scale-95 transition-all disabled:opacity-60 hover:bg-[#1A1A1A]"
             >
-              {saving ? "Wird gespeichert..." : "Fertig & Discover öffnen"}
+              {saving && (
+                <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              )}
+              {saving ? "Wird gespeichert…" : "Fertig & Discover öffnen"}
             </button>
           )}
         </div>

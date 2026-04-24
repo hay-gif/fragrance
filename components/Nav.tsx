@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useSwipe } from "@/lib/useSwipe";
 
@@ -9,10 +10,12 @@ export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [cartCount, setCartCount] = useState(0);
+  const pathname = usePathname();
   const swipe = useSwipe({ onSwipeLeft: () => setMenuOpen(false) });
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -41,8 +44,22 @@ export default function Nav() {
       }
     });
 
+    function syncCartCount() {
+      try {
+        const raw = localStorage.getItem("fragrance-os-cart");
+        if (!raw) { setCartCount(0); return; }
+        const parsed: { quantity: number }[] = JSON.parse(raw);
+        setCartCount(parsed.reduce((s, i) => s + i.quantity, 0));
+      } catch {
+        setCartCount(0);
+      }
+    }
+    syncCartCount();
+    window.addEventListener("storage", syncCartCount);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("storage", syncCartCount);
       subscription.unsubscribe();
     };
   }, []);
@@ -88,8 +105,8 @@ export default function Nav() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "bg-[#0A0A0A]/95 backdrop-blur-xl shadow-[0_1px_0_rgba(255,255,255,0.06)]" : "bg-transparent"
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? "backdrop-blur-md bg-[#0A0A0A]/90 shadow-[0_1px_0_rgba(255,255,255,0.06)]" : "bg-[#0A0A0A]"
       }`}>
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 lg:px-8">
           {/* Logo */}
@@ -99,16 +116,24 @@ export default function Nav() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((l) => (
-              <Link key={l.href} href={l.href} className="text-xs font-medium uppercase tracking-widest text-white/70 hover:text-white transition-colors">
-                {l.label}
-              </Link>
-            ))}
-            {userLinks.map((l) => (
-              <Link key={l.href} href={l.href} className="text-xs font-medium uppercase tracking-widest text-white/50 hover:text-white/80 transition-colors">
-                {l.label}
-              </Link>
-            ))}
+            {navLinks.map((l) => {
+              const isActive = pathname === l.href;
+              return (
+                <Link key={l.href} href={l.href} className={`relative text-xs font-medium uppercase tracking-widest transition-colors duration-150 hover:text-white ${isActive ? "text-white" : "text-white/70"}`}>
+                  {l.label}
+                  {isActive && <span className="absolute -bottom-1 left-0 right-0 h-px bg-[#C9A96E] rounded-full" />}
+                </Link>
+              );
+            })}
+            {userLinks.map((l) => {
+              const isActive = pathname === l.href;
+              return (
+                <Link key={l.href} href={l.href} className={`relative text-xs font-medium uppercase tracking-widest transition-colors duration-150 hover:text-white ${isActive ? "text-white/90" : "text-white/50"}`}>
+                  {l.label}
+                  {isActive && <span className="absolute -bottom-1 left-0 right-0 h-px bg-[#C9A96E] rounded-full" />}
+                </Link>
+              );
+            })}
             {roleLinks.map((l) => (
               <Link key={l.href} href={l.href} className="text-xs font-medium uppercase tracking-widest text-[#C9A96E]/80 hover:text-[#C9A96E] transition-colors border border-[#C9A96E]/30 rounded-full px-3 py-1">
                 {l.label}
@@ -121,13 +146,18 @@ export default function Nav() {
             <Link
               href="/cart"
               aria-label="Warenkorb"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/70 hover:border-white/50 hover:text-white active:bg-white/10 transition-all"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/70 hover:border-white/50 hover:text-white active:bg-white/10 transition-all"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M2 2h1.5l1.5 8h7l1.5-5.5H5" strokeLinecap="round" strokeLinejoin="round"/>
                 <circle cx="6.5" cy="12.5" r="1" fill="currentColor" stroke="none"/>
                 <circle cx="11.5" cy="12.5" r="1" fill="currentColor" stroke="none"/>
               </svg>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white leading-none">
+                  {cartCount > 9 ? "9+" : cartCount}
+                </span>
+              )}
             </Link>
             {loggedIn ? (
               <Link
@@ -164,8 +194,12 @@ export default function Nav() {
       </nav>
 
       {/* Mobile menu overlay */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-100 bg-[#0A0A0A] flex flex-col px-8 py-16 overflow-y-auto" {...swipe}>
+      <div
+        className={`fixed inset-0 z-100 bg-[#0A0A0A] flex flex-col px-8 py-16 overflow-y-auto transform transition-all duration-300 ease-out ${
+          menuOpen ? "translate-y-0 opacity-100 pointer-events-auto" : "-translate-y-full opacity-0 pointer-events-none"
+        }`}
+        {...(menuOpen ? swipe : {})}
+      >
           <button
             type="button"
             aria-label="Navigation schließen"
@@ -202,8 +236,7 @@ export default function Nav() {
               Abmelden
             </button>
           )}
-        </div>
-      )}
+      </div>
     </>
   );
 }

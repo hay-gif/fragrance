@@ -228,7 +228,7 @@ function StarRating({
   onRate?: (r: number) => void;
   size?: "sm" | "md";
 }) {
-  const sizeClass = size === "sm" ? "text-sm" : "text-xl";
+  const dim = size === "sm" ? 14 : 20;
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -236,9 +236,11 @@ function StarRating({
           key={star}
           type="button"
           onClick={() => onRate?.(star)}
-          className={`${sizeClass} transition-colors ${onRate ? "cursor-pointer" : "cursor-default"} ${star <= rating ? "text-[#C9A96E]" : "text-[#DDD8CF]"}`}
+          className={`transition-colors ${onRate ? "cursor-pointer hover:scale-110" : "cursor-default"}`}
         >
-          ★
+          <svg width={dim} height={dim} viewBox="0 0 20 20" fill={star <= rating ? "#C9A96E" : "none"} stroke={star <= rating ? "#C9A96E" : "#DDD8CF"} strokeWidth="1.5">
+            <path d="M10 2l2.4 5 5.6.8-4 3.9.9 5.5L10 14.5l-4.9 2.7.9-5.5L2 7.8l5.6-.8z" strokeLinejoin="round"/>
+          </svg>
         </button>
       ))}
     </div>
@@ -939,9 +941,18 @@ export default function FragranceDetailPage({
                 In den Warenkorb
               </button>
 
-              {/* Share & Earn — jeder eingeloggte User kann seinen Duft teilen */}
               {currentUserId && fragrance?.isPublic && (
-                <div className="pt-0.5">
+                <div className="rounded-2xl border border-[#C9A96E]/40 bg-[#FBF6EE] px-4 py-3 flex items-center gap-3">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#B09050" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <circle cx="13" cy="3" r="1.5"/>
+                    <circle cx="3" cy="8" r="1.5"/>
+                    <circle cx="13" cy="13" r="1.5"/>
+                    <path d="M4.5 7.2l7-3.4M4.5 8.8l7 3.4"/>
+                  </svg>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#B09050]">Teilen & Verdienen</p>
+                    <p className="text-[10px] text-[#9E9890] mt-0.5">Link teilen und Provision erhalten</p>
+                  </div>
                   <ShareButton fragranceId={fragranceId} fragranceName={fragrance?.name ?? ""} />
                 </div>
               )}
@@ -998,9 +1009,9 @@ export default function FragranceDetailPage({
           </div>
           <div className="space-y-4 max-w-lg">
             {compositionEntries.map(([accordId, percent]) => (
-              <div key={accordId}>
+              <div key={accordId} className="group">
                 <div className="mb-1.5 flex items-center justify-between">
-                  <span className="text-sm font-medium text-[#0A0A0A]">{getAccordName(accordId)}</span>
+                  <span className="inline-flex items-center rounded-full bg-[#F5F0EA] px-3 py-1 text-sm font-medium text-[#0A0A0A] group-hover:bg-[#EDE7DC] transition-colors">{getAccordName(accordId)}</span>
                   <span className="text-xs text-[#9E9890]">{percent}%</span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-[#E5E0D8]">
@@ -1287,7 +1298,7 @@ export default function FragranceDetailPage({
         ) : (
           <div className="space-y-4">
             {reviews.map((review) => (
-              <div key={review.id} className="rounded-2xl bg-white border border-[#E5E0D8] p-5 hover:border-[#C9A96E]/30 transition-colors">
+              <div key={review.id} className="rounded-2xl bg-white border border-[#E5E0D8] p-5 hover:bg-[#F5F3F0] hover:border-[#C9A96E]/30 transition-colors">
                 {/* Header row */}
                 <div className="flex items-start justify-between gap-3">
                   <div>

@@ -510,7 +510,7 @@ export default function CartPage() {
         </p>
       </div>
 
-      <div className="mx-auto max-w-3xl px-5 py-6">
+      <div className="mx-auto max-w-5xl px-5 py-6">
         {orderSuccessMessage && (
           <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-4">
             <p className="text-sm font-medium text-green-700">{orderSuccessMessage}</p>
@@ -524,23 +524,33 @@ export default function CartPage() {
         )}
 
         {items.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 rounded-2xl bg-white border border-[#E5E0D8] p-10 text-center">
-            <p className="text-sm text-[#6E6860]">Dein Warenkorb ist leer.</p>
+          <div className="flex flex-col items-center gap-5 rounded-2xl bg-white border border-[#E5E0D8] p-14 text-center mx-auto">
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none" className="text-[#E5E0D8]">
+              <circle cx="28" cy="28" r="27" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M16 20h3l4 14h14l4-10H20" stroke="#C5C0B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="24" cy="38" r="2" fill="#C5C0B8"/>
+              <circle cx="34" cy="38" r="2" fill="#C5C0B8"/>
+            </svg>
+            <div>
+              <p className="text-base font-semibold text-[#0A0A0A]">Dein Warenkorb ist leer</p>
+              <p className="mt-1 text-sm text-[#9E9890]">Entdecke unsere einzigartigen Düfte.</p>
+            </div>
             <Link
               href="/discover"
-              className="rounded-full bg-[#0A0A0A] px-5 py-2.5 text-xs font-medium uppercase tracking-wider text-white active:scale-95 transition-all"
+              className="rounded-full bg-[#0A0A0A] px-6 py-2.5 text-xs font-medium uppercase tracking-wider text-white hover:bg-[#1a1a1a] active:scale-95 transition-all"
             >
               Düfte entdecken
             </Link>
           </div>
         ) : (
           <>
+            <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8 lg:items-start">
             {/* Cart Items */}
             <div className="space-y-3">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl bg-white border border-[#E5E0D8] p-5"
+                  className="rounded-2xl bg-white border border-[#E5E0D8] p-5 hover:bg-[#F5F3F0] transition-colors"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -564,7 +574,7 @@ export default function CartPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full border border-[#E5E0D8] text-sm text-[#6E6860] hover:border-[#0A0A0A] transition-colors"
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E0D8] text-sm text-[#6E6860] hover:border-[#0A0A0A] hover:bg-[#F5F0EA] active:scale-90 transition-all"
                       >
                         −
                       </button>
@@ -573,7 +583,7 @@ export default function CartPage() {
                       </span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full border border-[#E5E0D8] text-sm text-[#6E6860] hover:border-[#0A0A0A] transition-colors"
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E0D8] text-sm text-[#6E6860] hover:border-[#0A0A0A] hover:bg-[#F5F0EA] active:scale-90 transition-all"
                       >
                         +
                       </button>
@@ -587,7 +597,7 @@ export default function CartPage() {
             </div>
 
             {/* Checkout Section */}
-            <div className="mt-6 rounded-2xl bg-white border border-[#E5E0D8] p-5">
+            <div className="mt-6 lg:mt-0 rounded-2xl bg-white border border-[#E5E0D8] shadow-sm p-5 lg:sticky lg:top-24">
               <h2 className="text-sm font-semibold text-[#0A0A0A]">Checkout</h2>
               <p className="mt-1 text-xs text-[#9E9890]">
                 Felder werden aus deinem Profil vorausgefüllt.
@@ -715,6 +725,7 @@ export default function CartPage() {
                   {loading ? "Bitte warten..." : "Jetzt bestellen"}
                 </button>
               </div>
+            </div>
             </div>
           </>
         )}

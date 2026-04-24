@@ -1033,10 +1033,10 @@ export default function AdminPage() {
                 if (key === "challenges") loadChallenges();
                 if (key === "compliance") loadCompliance();
               }}
-              className={`shrink-0 px-4 py-3 text-xs font-medium uppercase tracking-wider border-b-2 transition-colors whitespace-nowrap ${
+              className={`shrink-0 px-4 py-3 text-xs font-medium uppercase tracking-wider border-b-2 transition-all duration-200 whitespace-nowrap active:scale-95 ${
                 tab === key
                   ? "border-[#0A0A0A] text-[#0A0A0A]"
-                  : "border-transparent text-[#9E9890] hover:text-[#6E6860]"
+                  : "border-transparent text-[#9E9890] hover:text-[#6E6860] hover:border-[#C5C0B8]"
               }`}
             >
               {label}
@@ -1052,12 +1052,12 @@ export default function AdminPage() {
             {/* Quick Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { label: "Nutzer", value: users.length, icon: "◎" },
-                { label: "Bestellungen", value: orders.length, icon: "◫" },
-                { label: "Offen (Auszahlung)", value: payableItems.filter(i => i.payoutStatus === "payable").length, icon: "€" },
-                { label: "Bewerbungen", value: applications.filter(a => a.status === "pending").length, icon: "✦" },
+                { label: "Nutzer", value: users.length, icon: "◎", accent: "border-l-blue-400" },
+                { label: "Bestellungen", value: orders.length, icon: "◫", accent: "border-l-[#B09050]" },
+                { label: "Offen (Auszahlung)", value: payableItems.filter(i => i.payoutStatus === "payable").length, icon: "€", accent: "border-l-amber-400" },
+                { label: "Bewerbungen", value: applications.filter(a => a.status === "pending").length, icon: "✦", accent: "border-l-purple-400" },
               ].map((s) => (
-                <div key={s.label} className="rounded-2xl border border-[#E5E0D8] bg-white p-4">
+                <div key={s.label} className={`rounded-2xl border border-[#E5E0D8] border-l-4 ${s.accent} bg-white p-4 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200`}>
                   <p className="text-xl font-bold text-[#0A0A0A]">{s.icon} {s.value}</p>
                   <p className="mt-1 text-[10px] uppercase tracking-widest text-[#9E9890]">{s.label}</p>
                 </div>
@@ -1173,8 +1173,8 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => (
-                    <tr key={user.id} className="border-b last:border-0">
+                  {users.map((user, idx) => (
+                    <tr key={user.id} className={`border-b last:border-0 transition-colors hover:bg-[#F5F0EA] ${idx % 2 === 0 ? "bg-white" : "bg-[#FAFAF8]"}`}>
                       <td className="px-4 py-3">
                         <p className="font-medium">
                           {user.displayName ?? user.username ?? "–"}
@@ -1309,9 +1309,9 @@ export default function AdminPage() {
                         <button
                           onClick={() => saveUser(user.id)}
                           disabled={savingUserId === user.id}
-                          className="rounded-lg border px-3 py-1 text-xs hover:bg-black hover:text-white disabled:opacity-50"
+                          className="rounded-lg border border-[#E5E0D8] px-3 py-1 text-xs hover:bg-[#0A0A0A] hover:text-white active:scale-95 transition-all disabled:opacity-50"
                         >
-                          {savingUserId === user.id ? "..." : "Speichern"}
+                          {savingUserId === user.id ? "…" : "Speichern"}
                         </button>
                       </td>
                     </tr>
@@ -1341,8 +1341,8 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map((order) => (
-                    <tr key={order.id} className="border-b last:border-0">
+                  {orders.map((order, idx) => (
+                    <tr key={order.id} className={`border-b last:border-0 transition-colors hover:bg-[#F5F0EA] ${idx % 2 === 0 ? "bg-white" : "bg-[#FAFAF8]"}`}>
                       <td className="px-4 py-3 font-mono text-xs text-[#9E9890]">
                         {order.id.slice(0, 8)}…
                       </td>
@@ -1353,7 +1353,13 @@ export default function AdminPage() {
                         </p>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="rounded-full border px-2 py-0.5 text-xs">
+                        <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium ${
+                          order.status === "delivered" ? "bg-emerald-50 border-emerald-200 text-emerald-700" :
+                          order.status === "shipped" ? "bg-blue-50 border-blue-200 text-blue-700" :
+                          order.status === "in_production" ? "bg-purple-50 border-purple-200 text-purple-700" :
+                          order.status === "cancelled" || order.status === "returned" ? "bg-red-50 border-red-200 text-red-600" :
+                          "bg-amber-50 border-amber-200 text-amber-700"
+                        }`}>
                           {ORDER_STATUS_LABELS[order.status] ?? order.status}
                         </span>
                       </td>
@@ -1448,14 +1454,14 @@ export default function AdminPage() {
                       <button
                         onClick={() => reviewApplication(app.id, app.userId, "approved")}
                         disabled={processingApplicationId === app.id}
-                        className="rounded-full bg-[#0A0A0A] px-5 py-2.5 text-sm text-white disabled:opacity-50"
+                        className="rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 active:scale-95 transition-all disabled:opacity-50"
                       >
-                        {processingApplicationId === app.id ? "..." : "Genehmigen"}
+                        {processingApplicationId === app.id ? "…" : "Genehmigen"}
                       </button>
                       <button
                         onClick={() => reviewApplication(app.id, app.userId, "rejected")}
                         disabled={processingApplicationId === app.id}
-                        className="rounded-full border border-[#E5E0D8] px-4 py-2 text-sm disabled:opacity-50"
+                        className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 active:scale-95 transition-all disabled:opacity-50"
                       >
                         Ablehnen
                       </button>
@@ -1471,13 +1477,13 @@ export default function AdminPage() {
         {tab === "payouts" && (
           <div className="mt-6">
             <div className="mb-6 grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl bg-white border border-[#E5E0D8] p-5">
+              <div className="rounded-2xl bg-white border border-[#E5E0D8] border-l-4 border-l-amber-400 p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
                 <p className="text-sm text-[#9E9890]">Ausstehend (auszahlbar)</p>
                 <p className="mt-2 text-2xl font-bold text-orange-600">
                   {(pendingPayoutCents / 100).toFixed(2)} €
                 </p>
               </div>
-              <div className="rounded-2xl bg-white border border-[#E5E0D8] p-5">
+              <div className="rounded-2xl bg-white border border-[#E5E0D8] border-l-4 border-l-emerald-500 p-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
                 <p className="text-sm text-[#9E9890]">Bereits ausgezahlt</p>
                 <p className="mt-2 text-2xl font-bold text-green-700">
                   {(paidPayoutCents / 100).toFixed(2)} €
@@ -1501,8 +1507,8 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {payableItems.map((item) => (
-                    <tr key={item.id} className="border-b last:border-0">
+                  {payableItems.map((item, idx) => (
+                    <tr key={item.id} className={`border-b last:border-0 transition-colors hover:bg-[#F5F0EA] ${idx % 2 === 0 ? "bg-white" : "bg-[#FAFAF8]"}`}>
                       <td className="px-4 py-3">
                         <p className="font-medium">
                           {item.creatorUsername ?? "–"}
@@ -1544,9 +1550,9 @@ export default function AdminPage() {
                           <button
                             onClick={() => markAsPaid(item.id)}
                             disabled={markingPaidId === item.id}
-                            className="rounded-lg border px-3 py-1 text-xs hover:bg-black hover:text-white disabled:opacity-50"
+                            className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100 active:scale-95 transition-all disabled:opacity-50"
                           >
-                            {markingPaidId === item.id ? "..." : "Als bezahlt"}
+                            {markingPaidId === item.id ? "…" : "Als bezahlt"}
                           </button>
                         )}
                       </td>
@@ -1587,11 +1593,11 @@ export default function AdminPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {analytics.eventCounts.map((e) => {
+                        {analytics.eventCounts.map((e, idx) => {
                           const total = analytics.eventCounts.reduce((s, x) => s + x.count, 0);
                           const pct = total > 0 ? Math.round((e.count / total) * 100) : 0;
                           return (
-                            <tr key={e.event_type} className="border-b last:border-0">
+                            <tr key={e.event_type} className={`border-b last:border-0 transition-colors hover:bg-[#F5F0EA] ${idx % 2 === 0 ? "bg-white" : "bg-[#FAFAF8]"}`}>
                               <td className="py-2 font-mono text-xs">{e.event_type}</td>
                               <td className="py-2 text-right font-semibold">{e.count}</td>
                               <td className="py-2 pl-4">
@@ -1683,8 +1689,8 @@ export default function AdminPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {analytics.recentEvents.map((ev) => (
-                          <tr key={ev.id} className="border-b last:border-0">
+                        {analytics.recentEvents.map((ev, idx) => (
+                          <tr key={ev.id} className={`border-b last:border-0 transition-colors hover:bg-[#F5F0EA] ${idx % 2 === 0 ? "bg-white" : "bg-[#FAFAF8]"}`}>
                             <td className="py-1.5 text-[#C5C0B8]">
                               {new Date(ev.created_at).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })}
                             </td>
@@ -1935,8 +1941,8 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {complianceFragrances.map((f) => (
-                        <tr key={f.id} className="border-b last:border-0">
+                      {complianceFragrances.map((f, idx) => (
+                        <tr key={f.id} className={`border-b last:border-0 transition-colors hover:bg-[#F5F0EA] ${idx % 2 === 0 ? "bg-white" : "bg-[#FAFAF8]"}`}>
                           <td className="px-4 py-3">
                             <p className="font-medium text-[#0A0A0A]">{f.name}</p>
                             <p className="text-xs text-[#C5C0B8]">{f.id.slice(0, 8)}…</p>
@@ -2025,11 +2031,11 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {complianceCreators.map((c) => {
+                      {complianceCreators.map((c, idx) => {
                         const hasTax = !!(c.vatId || c.taxId || c.isKleinunternehmer);
                         const isReady = !!(c.agreementAcceptedAt && c.legalName && hasTax);
                         return (
-                          <tr key={c.id} className={`border-b last:border-0 ${c.payoutBlocked ? "bg-red-50" : ""}`}>
+                          <tr key={c.id} className={`border-b last:border-0 transition-colors hover:bg-[#F5F0EA] ${c.payoutBlocked ? "bg-red-50 hover:bg-red-100" : idx % 2 === 0 ? "bg-white" : "bg-[#FAFAF8]"}`}>
                             <td className="px-4 py-3">
                               <p className="font-medium text-[#0A0A0A]">{c.displayName ?? c.username ?? "–"}</p>
                               <p className="text-[#C5C0B8]">{c.email}</p>
